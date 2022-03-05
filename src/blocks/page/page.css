@@ -1,9 +1,8 @@
-/* input, textarea {outline:none;}
+input, textarea {outline:none;}
 input:active, textarea:active {outline:none;}
 :focus {outline:none;}
 textarea {resize:none;}
 
- */
 .page {
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
@@ -13,7 +12,7 @@ textarea {resize:none;}
   font-feature-settings: "kern";
   max-width: 1280px;
   background-color: black;
-/*   color: #fff; */
+  color: #fff;
   padding: 0;
   margin: 0 auto;
   box-sizing: border-box;
