@@ -6,6 +6,7 @@ import ImagePopup from "./ImagePopup";
 import Main from "./Main";
 import PopupWithForm from "./PopupWithForm";
 import { CurrentUserContext } from "../context/CurrentUserContext";
+import EditProfilePopup from "./EditProfilePopup";
 
 function App() {
   const [isEditAvatarPopupOpen, setIsEditAvatarPopupOpen] = useState(false);
@@ -44,6 +45,17 @@ function App() {
     setSelectedCard(null);
   };
 
+  const handleUpdateUser = (info) => {
+    api.setInfo(info)
+    .then((res) => {
+      setCurrentUser(res);
+      closeAllPopups();
+    })
+    .catch((err) => {
+      console.log(`Ошибка при загрузке данных пользователя ${err}`);
+    });
+  }
+
   return (
     <div className="App">
       <CurrentUserContext.Provider value={currentUser}>
@@ -56,38 +68,7 @@ function App() {
             onCardClick={handleCardClick}
           />
           <Footer />
-          <PopupWithForm
-            name="profileEdit"
-            children={
-              <div>
-                <input
-                  required
-                  placeholder="Имя"
-                  name="name"
-                  id="name"
-                  type="text"
-                  minLength="2"
-                  maxLength="40"
-                  className="popup__input popup__input_add_name"
-                />
-                <span id="name-error" className="popup__error"></span>
-                <input
-                  required
-                  placeholder="Профессиональная деятельность"
-                  name="about"
-                  id="about"
-                  type="text"
-                  minLength="2"
-                  maxLength="200"
-                  className="popup__input popup__input_add_mission"
-                />
-                <span id="about-error" className="popup__error"></span>
-              </div>
-            }
-            title="Редактировать профиль"
-            isOpen={isEditProfilePopupOpen}
-            onClose={closeAllPopups}
-          />
+          <EditProfilePopup isOpen={isEditProfilePopupOpen} onClose={closeAllPopups} onUpdateUser={handleUpdateUser} />
 
           <PopupWithForm
             name="avatarEdit"
