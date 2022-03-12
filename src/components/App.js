@@ -7,6 +7,7 @@ import Main from "./Main";
 import PopupWithForm from "./PopupWithForm";
 import { CurrentUserContext } from "../context/CurrentUserContext";
 import EditProfilePopup from "./EditProfilePopup";
+import EditAvatarPopup from "./EditAvatarPopup";
 
 function App() {
   const [isEditAvatarPopupOpen, setIsEditAvatarPopupOpen] = useState(false);
@@ -56,6 +57,17 @@ function App() {
     });
   }
 
+  const handleUpdateAvatar = (info) => {
+    api.setUserAvatar(info)
+    .then((res) => {
+      setCurrentUser(res);
+      closeAllPopups();
+    })
+    .catch((err) => {
+      console.log(`Ошибка при загрузке аватара ${err}`);
+    });
+  }
+
   return (
     <div className="App">
       <CurrentUserContext.Provider value={currentUser}>
@@ -70,25 +82,7 @@ function App() {
           <Footer />
           <EditProfilePopup isOpen={isEditProfilePopupOpen} onClose={closeAllPopups} onUpdateUser={handleUpdateUser} />
 
-          <PopupWithForm
-            name="avatarEdit"
-            children={
-              <div>
-                <input
-                  required
-                  placeholder="Ссылка на картинку"
-                  name="avatar"
-                  id="avatar"
-                  type="url"
-                  className="popup__input popup__input_change_avatar"
-                />
-                <span id="avatar-error" className="popup__error"></span>
-              </div>
-            }
-            title="Обновить аватар"
-            isOpen={isEditAvatarPopupOpen}
-            onClose={closeAllPopups}
-          />
+          <EditAvatarPopup isOpen={isEditAvatarPopupOpen} onClose={closeAllPopups} onUpdateAvatar={handleUpdateAvatar} />
 
           <PopupWithForm
             name="addArticle"
