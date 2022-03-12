@@ -1,6 +1,14 @@
 import React, { useEffect } from "react";
 
-function PopupWithForm({ name, title, children, isOpen, onClose, buttonText="Сохранить", onSubmit }) {
+function PopupWithForm({
+  name,
+  title,
+  children,
+  isOpen,
+  onClose,
+  buttonText = "Сохранить",
+  onSubmit,
+}) {
   const handleEscClose = (e) => {
     if (
       e.key === "Escape" ||
@@ -30,7 +38,13 @@ function PopupWithForm({ name, title, children, isOpen, onClose, buttonText="С�
       >
         <div className="popup__container">
           <h2 className="popup__title">{title}</h2>
-          <form onSubmit={onSubmit} name={name} action="#" className="popup__form" noValidate>
+          <form
+            onSubmit={onSubmit}
+            name={name}
+            action="#"
+            className="popup__form"
+            noValidate
+          >
             {children}
             <button type="submit" className="popup__save-btn">
               {buttonText}

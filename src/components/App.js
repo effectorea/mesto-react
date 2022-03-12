@@ -17,7 +17,6 @@ function App() {
   const [currentUser, setCurrentUser] = useState(null);
   const [cards, setCards] = useState([]);
 
-
   useEffect(() => {
     api
       .getCards()
@@ -87,33 +86,36 @@ function App() {
     const isLiked = card.likes.some((i) => i._id === currentUser._id);
     if (!isLiked) {
       api.setCardLike(card._id, !isLiked).then((newCard) => {
-        setCards((state) => state.map((c) => (c._id === card._id ? newCard : c)));
+        setCards((state) =>
+          state.map((c) => (c._id === card._id ? newCard : c))
+        );
       });
     } else {
       api.removeCardLike(card._id, isLiked).then((newCard) => {
-        setCards((state) => state.map((c) => (c._id === card._id ? newCard : c)));
+        setCards((state) =>
+          state.map((c) => (c._id === card._id ? newCard : c))
+        );
       });
     }
   }
 
   function handleCardDelete(card) {
-    api.deleteCard(card._id)
-      .then(() => {
-      setCards((state) => state.filter((c) => (c._id !== card._id)));
+    api.deleteCard(card._id).then(() => {
+      setCards((state) => state.filter((c) => c._id !== card._id));
     });
   }
 
   function handleUpdatePlace(card) {
-    api.addCard(card)
-    .then((res) => {
-      setCards([res, ...cards]);
-      closeAllPopups();
-    })
-    .catch((err) => {
-      console.log(`Ошибка при загрузке карточки ${err}`);
-    });
+    api
+      .addCard(card)
+      .then((res) => {
+        setCards([res, ...cards]);
+        closeAllPopups();
+      })
+      .catch((err) => {
+        console.log(`Ошибка при загрузке карточки ${err}`);
+      });
   }
-
 
   return (
     <div className="App">
@@ -142,7 +144,11 @@ function App() {
             onUpdateAvatar={handleUpdateAvatar}
           />
 
-          <AddPlacePopup isOpen={isAddPlacePopupOpen} onClose={closeAllPopups} onUpdatePlace={handleUpdatePlace} />
+          <AddPlacePopup
+            isOpen={isAddPlacePopupOpen}
+            onClose={closeAllPopups}
+            onUpdatePlace={handleUpdatePlace}
+          />
 
           <ImagePopup card={selectedCard} onClose={closeAllPopups} />
         </div>
