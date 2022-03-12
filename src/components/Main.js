@@ -1,25 +1,13 @@
 import React, { useEffect, useState } from "react";
+import { CurrentUserContext } from "../context/CurrentUserContext";
 import { api } from "../utils/Api";
 import Card from "./Card";
 
-function Main({ onEditProfile, onAddPlace, onEditAvatar, onCardClick }) {
-  const [userName, setUserName] = useState("Имя пользователя");
-  const [userDescription, setUserDescription] = useState("Описание");
-  const [userAvatar, setUserAvatar] = useState("Аватар");
+function Main({ onEditProfile, onAddPlace, onEditAvatar, onCardClick}) {
   const [cards, setCards] = useState([]);
+  const currentUser = React.useContext(CurrentUserContext);
 
   useEffect(() => {
-    api
-      .getUserInfo()
-      .then((res) => {
-        setUserName(res.name);
-        setUserDescription(res.about);
-        setUserAvatar(res.avatar);
-      })
-      .catch((err) => {
-        console.log(`Ошибка при загрузке данных пользователя ${err}`);
-      });
-
     api
       .getCards()
       .then((res) => {
@@ -30,9 +18,22 @@ function Main({ onEditProfile, onAddPlace, onEditAvatar, onCardClick }) {
       });
   }, []);
 
+  function handleCardLike(card) {
+    // Снова проверяем, есть ли уже лайк на этой карточке
+    const isLiked = card.likes.some(i => i._id === currentUser._id);
+    
+    // Отправляем запрос в API и получаем обновлённые данные карточки
+    api.setCardLike(card._id, !isLiked).then((newCard) => {
+        setCards((state) => state.map((c) => c._id === card._id ? newCard : c));
+    });
+    api.removeCardLike(card._id, isLiked).then((newCard) => {
+      setCards((state) => state.map((c) => c._id === card._id ? newCard : c));
+  });
+}
+
   const article = () => {
     return cards.map((element) => (
-      <Card card={element} key={element._id} onCardClick={onCardClick} />
+      <Card card={element} key={element._id} onCardClick={onCardClick} onCardLike={handleCardLike} />
     ));
   };
 
@@ -41,19 +42,23 @@ function Main({ onEditProfile, onAddPlace, onEditAvatar, onCardClick }) {
       <main className="content">
         <section className="profile">
           <div onClick={onEditAvatar} className="profile__wrapper">
-            <img src={userAvatar} alt="Аватарка" className="profile__avatar" />
+            <img
+              src={currentUser?.avatar}
+              alt="Аватарка"
+              className="profile__avatar"
+            />
             <div className="profile__cover"></div>
           </div>
           <div className="profile__info">
             <div className="profile__info-twin">
-              <h1 className="profile__title">{userName}</h1>
+              <h1 className="profile__title">{currentUser?.name}</h1>
               <button
                 onClick={onEditProfile}
                 type="button"
                 className="profile__edit-button"
               ></button>
             </div>
-            <p className="profile__subtitle">{userDescription}</p>
+            <p className="profile__subtitle">{currentUser?.about}</p>
           </div>
           <button
             onClick={onAddPlace}
