@@ -1,41 +1,10 @@
-import React, { useEffect, useState } from "react";
+import React from "react";
 import { CurrentUserContext } from "../context/CurrentUserContext";
-import { api } from "../utils/Api";
 import Card from "./Card";
 
-function Main({ onEditProfile, onAddPlace, onEditAvatar, onCardClick }) {
-  const [cards, setCards] = useState([]);
+function Main({ cards, onEditProfile, onAddPlace, onEditAvatar, onCardClick, onCardLike, onCardDelete }) {
+  
   const currentUser = React.useContext(CurrentUserContext);
-
-  useEffect(() => {
-    api
-      .getCards()
-      .then((res) => {
-        setCards(res);
-      })
-      .catch((err) => {
-        console.log(`Ошибка при загрузке данных ${err}`);
-      });
-  }, []);
-
-  function handleCardLike(card) {
-    const isLiked = card.likes.some((i) => i._id === currentUser._id);
-    if (!isLiked) {
-      api.setCardLike(card._id, !isLiked).then((newCard) => {
-        setCards((state) => state.map((c) => (c._id === card._id ? newCard : c)));
-      });
-    } else {
-      api.removeCardLike(card._id, isLiked).then((newCard) => {
-        setCards((state) => state.map((c) => (c._id === card._id ? newCard : c)));
-      });
-    }
-  }
-
-  function handleCardDelete(card) {
-    api.deleteCard(card._id).then(() => {
-      setCards((state) => state.filter((c) => (c._id !== card._id)));
-    });
-  }
 
   const article = () => {
     return cards.map((element) => (
@@ -43,8 +12,8 @@ function Main({ onEditProfile, onAddPlace, onEditAvatar, onCardClick }) {
         card={element}
         key={element._id}
         onCardClick={onCardClick}
-        onCardLike={handleCardLike}
-        onCardDelete={handleCardDelete}
+        onCardLike={onCardLike}
+        onCardDelete={onCardDelete}
       />
     ));
   };

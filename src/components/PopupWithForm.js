@@ -18,7 +18,7 @@ function PopupWithForm({ name, title, children, isOpen, onClose, buttonText="Ð¡Ð
       document.removeEventListener("keydown", handleEscClose);
       document.removeEventListener("mousedown", handleEscClose);
     };
-  }, []);
+  });
 
   return (
     <div>
