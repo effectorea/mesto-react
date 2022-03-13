@@ -84,25 +84,20 @@ function App() {
 
   function handleCardLike(card) {
     const isLiked = card.likes.some((i) => i._id === currentUser._id);
-    if (!isLiked) {
-      api.setCardLike(card._id, !isLiked).then((newCard) => {
-        setCards((state) =>
-          state.map((c) => (c._id === card._id ? newCard : c))
-        );
-      });
-    } else {
-      api.removeCardLike(card._id, isLiked).then((newCard) => {
-        setCards((state) =>
-          state.map((c) => (c._id === card._id ? newCard : c))
-        );
-      });
-    }
+
+    api
+      .switchLike(card._id, isLiked)
+      .then((res) =>
+        setCards((state) => state.map((c) => (c._id === card._id ? res : c)))
+      )
+      .catch((err) => console.log(err));
   }
 
   function handleCardDelete(card) {
-    api.deleteCard(card._id).then(() => {
-      setCards((state) => state.filter((c) => c._id !== card._id));
-    });
+    api
+      .deleteCard(card._id)
+      .then(() => setCards((state) => state.filter((c) => c._id !== card._id)))
+      .catch((err) => console.log(err));
   }
 
   function handleUpdatePlace(card) {

@@ -25,7 +25,7 @@ function AddPlacePopup({ isOpen, onClose, onUpdatePlace }) {
   useEffect(() => {
     setPlace("");
     setLink("");
-  }, []);
+  }, [isOpen]);
 
   return (
     <PopupWithForm

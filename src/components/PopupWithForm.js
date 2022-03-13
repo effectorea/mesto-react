@@ -20,12 +20,14 @@ function PopupWithForm({
   };
 
   useEffect(() => {
-    document.addEventListener("keydown", handleEscClose);
-    document.addEventListener("mousedown", handleEscClose);
-    return () => {
-      document.removeEventListener("keydown", handleEscClose);
-      document.removeEventListener("mousedown", handleEscClose);
-    };
+    if (isOpen) {
+      document.addEventListener("keydown", handleEscClose);
+      document.addEventListener("mousedown", handleEscClose);
+      return () => {
+        document.removeEventListener("keydown", handleEscClose);
+        document.removeEventListener("mousedown", handleEscClose);
+      };
+    }
   });
 
   return (
