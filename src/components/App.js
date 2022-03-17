@@ -8,6 +8,7 @@ import { CurrentUserContext } from "../context/CurrentUserContext";
 import EditProfilePopup from "./EditProfilePopup";
 import EditAvatarPopup from "./EditAvatarPopup";
 import AddPlacePopup from "./AddPlacePopup";
+import PopupWithConfirm from "./PopupWithConfirm";
 
 function App() {
   const [isEditAvatarPopupOpen, setIsEditAvatarPopupOpen] = useState(false);
@@ -15,7 +16,9 @@ function App() {
   const [isAddPlacePopupOpen, setIsAddPlacePopupOpen] = useState(false);
   const [selectedCard, setSelectedCard] = useState(null);
   const [currentUser, setCurrentUser] = useState(null);
+  const [deletedCard, setDeletedCard] = useState(null);
   const [cards, setCards] = useState([]);
+  const [isConfirmationPopupOpen, setIsConfirmationPopupOpen] = useState(false);
 
   useEffect(() => {
     api
@@ -56,6 +59,7 @@ function App() {
     setIsEditProfilePopupOpen(false);
     setIsAddPlacePopupOpen(false);
     setSelectedCard(null);
+    setIsConfirmationPopupOpen(false);
   };
 
   const handleUpdateUser = (info) => {
@@ -93,11 +97,19 @@ function App() {
       .catch((err) => console.log(err));
   }
 
-  function handleCardDelete(card) {
+  function handleCardDelete() {
     api
-      .deleteCard(card._id)
-      .then(() => setCards((state) => state.filter((c) => c._id !== card._id)))
+      .deleteCard(deletedCard._id)
+      .then(() =>
+        setCards((state) => state.filter((c) => c._id !== deletedCard._id))
+      )
+      .then(() => closeAllPopups())
       .catch((err) => console.log(err));
+  }
+
+  function handleConfirmationClick(data) {
+    setDeletedCard(data);
+    setIsConfirmationPopupOpen(true);
   }
 
   function handleUpdatePlace(card) {
@@ -124,7 +136,7 @@ function App() {
             onEditAvatar={handleEditAvatarClick}
             onCardClick={handleCardClick}
             onCardLike={handleCardLike}
-            onCardDelete={handleCardDelete}
+            onCardDelete={handleConfirmationClick}
           />
           <Footer />
           <EditProfilePopup
@@ -143,6 +155,12 @@ function App() {
             isOpen={isAddPlacePopupOpen}
             onClose={closeAllPopups}
             onUpdatePlace={handleUpdatePlace}
+          />
+
+          <PopupWithConfirm
+            isOpen={isConfirmationPopupOpen}
+            onClose={closeAllPopups}
+            handleConfirmation={handleCardDelete}
           />
 
           <ImagePopup card={selectedCard} onClose={closeAllPopups} />
